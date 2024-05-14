@@ -1,7 +1,6 @@
 #Run the script using the following command 
 # spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.3 stream_taxi_json.py
 import os
-from sqlite3 import Timestamp
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, expr, from_json, struct
