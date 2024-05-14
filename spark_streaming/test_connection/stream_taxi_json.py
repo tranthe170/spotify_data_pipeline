@@ -1,12 +1,14 @@
 #Run the script using the following command 
 # spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.3 stream_taxi_json.py
-
+import os
 from sqlite3 import Timestamp
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, expr, from_json, struct
 from pyspark.sql.types import (FloatType, IntegerType, StringType, StructField,
                                StructType, TimestampType)
+
+KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", 'localhost')
 
 spark = SparkSession \
     .builder \
@@ -17,7 +19,7 @@ spark = SparkSession \
 taxi_rides = spark \
     .readStream \
     .format("kafka") \
-    .option("kafka.bootstrap.servers", "34.134.226.252:9092") \
+    .option("kafka.bootstrap.servers", f"{KAFKA_ADDRESS}:9092") \
     .option("subscribe", "yellow_taxi_ride.json") \
     .load()
 
@@ -42,62 +44,3 @@ taxi_rides \
     .outputMode("append") \
     .start() \
     .awaitTermination()
-
-
-# zones = spark \
-#         .readStream \
-#         .format("kafka") \
-#         .option("kafka.bootstrap.servers", "34.134.226.252:9092") \
-#         .option("subscribe", "zones.json") \
-#         .load()
-
-# zones = zones.selectExpr("CAST(value AS STRING)")
-
-# zones_schema = StructType([
-#     StructField("locationId", StringType(), True),
-#     StructField("borough", StringType(), True),
-#     StructField("zone", StringType(), True),
-#     StructField("service_zone", StringType(), True),
-#     StructField("zones_datetime", TimestampType(), True)
-# ])
-
-# zones = zones.select(from_json(col("value"), zones_schema).alias("data")).select("data.*")
-
-
-# # Apply watermarks on event-time columns
-# taxi_with_watermark = taxi_rides.withWatermark("pickup_datetime", "1 hours")
-# zones_with_watermark = zones.withWatermark("zones_datetime", "1 hours")
-
-
-# #set interval and join conditions
-# join_stream = taxi_with_watermark.join(
-#   zones_with_watermark,
-#   expr("""
-#     pickup_location = locationId AND
-#     zones_datetime >= pickup_datetime AND
-#     zones_datetime <= pickup_datetime + interval 1 hour
-#     """)
-# )
-
-# # write back to Kafka
-# join_stream \
-#     .selectExpr("CAST(vendorId AS STRING) as key", "to_json(struct(*)) AS value") \
-#     .writeStream \
-#     .format("kafka") \
-#     .option("kafka.bootstrap.servers", "localhost:9092") \
-#     .option("topic", "spark.stream.join") \
-#     .option("checkpointLocation", "checkpoint/") \
-#     .outputMode("append") \
-#     .start() \
-#     .awaitTermination()
-
-#write to a csv
-# join_stream \
-#     .coalesce(1) \
-#     .writeStream \
-#     .format("csv") \
-#     .option("path", "../avro/data/stream_output/") \
-#     .option("checkpointLocation", "checkpoint/") \
-#     .outputMode("append") \
-#     .start() \
-#     .awaitTermination()
