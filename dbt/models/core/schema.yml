@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: staging
+    database: spotify-data-pipeline
+    schema: streamify_stg
+    tables:
+      - name: listen_events
+      - name: page_view_events
+      - name: auth_events
+
+  - name: production
+    database: spotify-data-pipeline
+    schema: streamify_prod
+    tables:
+      - name: listen_events
+      - name: page_view_events
+      - name: auth_events
