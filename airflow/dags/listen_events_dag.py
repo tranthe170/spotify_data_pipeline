@@ -3,11 +3,12 @@ import os
 from datetime import datetime
 
 from airflow.operators.bash import BashOperator
-from bigquery_tasks import (create_empty_table, create_external_table,
-                            delete_external_table, insert_job)
 from schema import schema
 
 from airflow import DAG
+from airflow.dags.task_templates import (create_empty_table,
+                                         create_external_table,
+                                         delete_external_table, insert_job)
 
 BIG_QUERY_TABLE_NAME = 'listen_events'
 
