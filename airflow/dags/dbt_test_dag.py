@@ -20,7 +20,7 @@ with DAG(
 
     dbt_test_task = BashOperator(
         task_id = "dbt_test",
-        bash_command = "cd /dbt && dbt debug"
+        bash_command = "cd /dbt && dbt run"
     )
 
     dbt_test_task
