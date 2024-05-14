@@ -8,6 +8,7 @@ from pyspark.sql.functions import col, expr, from_json, struct
 from schema import listen_events_schema
 
 KAFKA_ADDRESS = os.getenv("KAFKA_ADDRESS", 'localhost')
+GCS_STORAGE_PATH = os.environ["GCS_STORAGE_PATH"]
 
 spark = (SparkSession
          .builder
@@ -32,6 +33,9 @@ listen_events = listen_events.select(
 (listen_events
     .writeStream
     .format("console")
+    .format("parquet")
+    .option("path", f"{GCS_STORAGE_PATH}")
+    .trigger(processingTime='60 seconds')
     .outputMode("append")
     .start()
     .awaitTermination())
