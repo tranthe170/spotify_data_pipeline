@@ -1,11 +1,14 @@
 import csv
+import os
 from datetime import datetime
 from json import dumps
 from time import sleep
 
 from kafka import KafkaProducer
 
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+KAFKA_ADDRESS=os.getenv('KAFKA_ADDRESS', 'localhost')
+
+producer = KafkaProducer(bootstrap_servers=[f'{KAFKA_ADDRESS}:9092'],
                          key_serializer=lambda x: dumps(x).encode('utf-8'),
                          value_serializer=lambda x: dumps(x, default=str).encode('utf-8'))
 
