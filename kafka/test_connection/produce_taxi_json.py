@@ -6,6 +6,7 @@ from time import sleep
 
 from kafka import KafkaProducer
 
+#set the env variable to an IP if not localhost
 KAFKA_ADDRESS=os.getenv('KAFKA_ADDRESS', 'localhost')
 
 producer = KafkaProducer(bootstrap_servers=[f'{KAFKA_ADDRESS}:9092'],
