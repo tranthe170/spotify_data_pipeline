@@ -1,5 +1,4 @@
 {{ config(materialized = 'table') }}
-
 SELECT {{ dbt_utils.surrogate_key(['artistId']) }} AS artistKey,
     *
 FROM (
@@ -9,15 +8,13 @@ FROM (
             MAX(artist_longitude) AS longitude,
             MAX(artist_location) AS location,
             artist_name AS name
-        FROM source('staging', 'songs')
+        FROM {{ source('staging', 'songs') }}
         GROUP BY artist_name
 
         UNION ALL
-
         SELECT 'NNNNNNNNNNNNNNN',
             0,
             0,
             'NA',
             'NA'
-
     )

@@ -1,5 +1,8 @@
 {{ config(materialized = 'table') }}
 
+-- level column in the users dimension is considered to be a SCD2 change. Just for the purpose of learning to write SCD2 change queries. 
+-- The below query is constructed to accommodate changing levels from free to paid and maintaining the latest state of the user along with
+-- historical record of the user's level
 
 SELECT {{ dbt_utils.surrogate_key(['userId', 'rowActivationDate', 'level']) }} as userKey, *
 FROM
@@ -38,9 +41,9 @@ GROUP BY userId, firstName, lastName, gender, registration, level, grouped
 
 UNION ALL
 
-SELECT CAST(user_id as BIGINT), first_name, last_name, gender, level, CAST(registration as BIGINT), CAST(min(ts) as date) as row_activation_date, DATE '9999-12-31' as row_expiration_date, 1 as current_row
-FROM stats 
-WHERE user_id = '0' or user_id = '1'
-GROUP BY user_id, first_name, last_name, gender, registration, level
+SELECT CAST(userId as BIGINT) as userKey, firstName, lastName, gender, level, CAST(registration as BIGINT) as registration, CAST(min(ts) as date) as rowActivationDate, DATE '9999-12-31' as rowExpirationDate, 1 as currentRow
+FROM {{ source('staging', 'listen_events') }} 
+WHERE userId = 0 or userId = 1
+GROUP BY userId, firstName, lastName, gender, level, registration
 
 )
