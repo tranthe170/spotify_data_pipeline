@@ -16,7 +16,7 @@ terraform init
 terraform apply
 ```
 
-This should spin up a VPC network and an `n1-standard-2` VM instance.
+This should spin up a VPC network and two `n1-standard-2` VM instances. One for Kafka, and one for Spark.
 
 ### VM Setup
 
@@ -40,30 +40,56 @@ Add the following content in it after replacing with the relevant values below.
 Host streamify-kafka
     HostName <External IP Address>
     User <username>
-    IdentityFile <path/your/google_credentials.json>
+    IdentityFile <path/to/home/.ssh/gcp>
+
+Host streamify-spark
+    HostName <External IP Address>
+    User <username>
+    IdentityFile <path/to/home/.ssh/gcp>
 ```
 
-SSH into the server using
+SSH into the server using the below commands in two separate terminals
 
 ```bash
 ssh streamify-kafka
 ```
 
-#### Script
+```bash
+ssh streamify-spark
+```
 
-In a different terminal, sftp the `vm_setup.sh` [script](scripts/vm_setup.sh) to the VM
+#### Repo Clone
+
+Clone the git [repo](https://github.com/ankurchavda/streamify) into you VMs
+
+Run the scripts in VM to install `anaconda`, `docker` and `docker-compose`, `spark` in your VM
 
 ```bash
-cd scripts
-sfpt streamify-kafka
+bash scripts/vm_setup.sh username
 ```
 
 ```bash
-put vm_setup.sh
+bash scripts/spark_setup.sh username
 ```
 
-Run the script in VM to install `anaconda`, `docker` and `docker-compose` iin your VM
+### Test Kafka-Spark Connection
 
-```bash
-bash vm_setup.sh username
-```
+1. Open the port `9092` on your Kafka server using these [steps](https://stackoverflow.com/a/21068402)
+2. Set the environment variable `KAFKA_ADDRESS` to the external IP of your VM machine in both the Spark and the Kafka VM machines:
+   ```bash
+   export KAFKA_ADDRESS=IP.ADD.RE.SS
+   ```
+3. Run `docker-compose up` in the `kafka` folder in the Kafka VM.
+4. Run the following command in the `kafka/test_connection` folder to start producing -
+   ```bash
+   python produce_taxi_json.py
+   ```
+5. Move to the Spark VM and run the following command in the `spark_streaming/test_connection` folder -
+   ```bash
+   spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.3 stream_taxi_json.py
+   ```
+
+## TODO
+
+1. Fix Spark Script with py4j eval
+2. Make setup easier with `Makefile`. Possibly a one-click setup.
