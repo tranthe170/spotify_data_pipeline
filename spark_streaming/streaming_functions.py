@@ -1,7 +1,20 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, dayofmonth, from_json, hour, month, year
+from pyspark.sql.functions import (col, dayofmonth, from_json, hour, month,
+                                   udf, year)
 
 
+@udf
+def string_decode(s, encoding='utf-8'):
+    if s:
+        return (s.encode('latin1')         # To bytes, required by 'unicode-escape'
+                .decode('unicode-escape') # Perform the actual octal-escaping decode
+                .encode('latin1')         # 1:1 mapping back to bytes
+                .decode(encoding)         # Decode original encoding
+                .strip('\"'))
+
+    else:
+        return s
+    
 def create_or_get_spark_session(app_name, master="yarn"):
     """
     Creates or gets a Spark Session
@@ -50,7 +63,7 @@ def create_kafka_read_stream(spark, kafka_address, kafka_port, topic, starting_o
     return read_stream
 
 
-def process_stream(stream, stream_schema):
+def process_stream(stream, stream_schema, topic):
     """
     Process stream to fetch on value from the kafka message.
     convert ts to timestamp format and produce year, month, day,
@@ -81,6 +94,14 @@ def process_stream(stream, stream_schema):
               .withColumn("hour", hour(col("ts")))
               .withColumn("day", dayofmonth(col("ts")))
               )
+    
+    # rectify string encoding
+    if topic in ["listen_events", "page_view_events"]:
+        stream = (stream
+                .withColumn("song", string_decode("song"))
+                .withColumn("artist", string_decode("artist")) 
+                )
+
 
     return stream
 
