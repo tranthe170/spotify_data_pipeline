@@ -1,96 +1,152 @@
 # Setup
 
+### Pre-requisites
+
+- Google Cloud Platform Account.
+  - **Note**: You will be charged for all the infra setup. Please avail the $300 credits by creating a new account on GCP.
+  - `gcloud` sdk in your local machine.
+  - You service account key
+- Terraform
+
 ### Terraform
 
-In order to spin up our infra, we will be using Terraform.
+Clone the repository in your local machine.
 
 ```bash
-cd terraform
+git clone https://github.com/ankurchavda/streamify.git && \
+cd streamify/terraform
 ```
 
-```bash
-terraform init
-```
+Spin up the Infra using.
 
-```bash
-terraform apply
-```
+- Initiate terraform and download the required dependencies-
+  ```bash
+  terraform init
+  ```
+- View the Terraform plan  
+  You will be asked to enter two values, the name of your GCS bucket you want to create and the GCP Project ID. Use the same values everytime (on `terraform apply` too).
+  ```bash
+  terraform plan
+  ```
+- Terraform plan should show the creation of following services -
 
-This should spin up a VPC network and two `n1-standard-2` VM instances. One for Kafka, and one for Spark.
+  - `e2-standard-4` Compute Instance for Kafka
+  - `e2-standard-4` Compute Instance for Airflow
+  - Dataproc Spark Cluster
+    - 1 `e2-standard-2` Master node
+    - 2 `e2-medium` Worker nodes
+  - A Google Cloud Storage bucket
+  - 2 Bigquery Datasets
+    - streamify_stg
+    - streamify_prod
+
+- Apply the infra
+  ```bash
+  terraform apply
+  ```
 
 ### VM Setup
 
-Create an ssh key in you local system in the `.ssh` folder
-
-```bash
-ssh-keygen -t rsa -f ~/.ssh/KEY_FILENAME -C USER -b 2048
-```
-
-Add the public key to you VM instance using this [link](https://cloud.google.com/compute/docs/connect/add-ssh-keys)
-
-Create a config file in your `.ssh` folder
-
-```
-touch ~/.ssh/config
-```
-
-Add the following content in it after replacing with the relevant values below.
-
-```bash
-Host streamify-kafka
+    @@ -44,49 +72,91 @@ Host streamify-spark
     HostName <External IP Address>
     User <username>
     IdentityFile <path/to/home/.ssh/gcp>
 
-Host streamify-spark
-    HostName <External IP Address>
-    User <username>
-    IdentityFile <path/to/home/.ssh/gcp>
-```
+Host streamify-airflow
+HostName <External IP Address>
+User <username>
+IdentityFile <path/to/home/.ssh/gcp>
 
-SSH into the server using the below commands in two separate terminals
+````
+
+SSH into the servers using the below commands in separate terminals
 
 ```bash
 ssh streamify-kafka
-```
+````
 
 ```bash
 ssh streamify-spark
 ```
 
-#### Repo Clone
-
-Clone the git [repo](https://github.com/ankurchavda/streamify) into you VMs
-
-Run the scripts in VM to install `anaconda`, `docker` and `docker-compose`, `spark` in your VM
-
 ```bash
-bash scripts/vm_setup.sh username
+ssh streamify-airflow
 ```
 
-```bash
-bash scripts/spark_setup.sh username
-```
+### Setup Kafka VM
 
-### Test Kafka-Spark Connection
+- Clone git repo and cd into Kafka folder
+  ```bash
+  git clone https://github.com/ankurchavda/streamify.git && \
+  ```
+- Install anaconda, docker & docker-compose.
 
-1. Open the port `9092` on your Kafka server using these [steps](https://stackoverflow.com/a/21068402)
-2. Set the environment variable `KAFKA_ADDRESS` to the external IP of your VM machine in both the Spark and the Kafka VM machines:
-   ```bash
-   export KAFKA_ADDRESS=IP.ADD.RE.SS
-   ```
-3. Run `docker-compose up` in the `kafka` folder in the Kafka VM.
-4. Run the following command in the `kafka/test_connection` folder to start producing -
-   ```bash
-   python produce_taxi_json.py
-   ```
-5. Move to the Spark VM and run the following command in the `spark_streaming/test_connection` folder -
-   ```bash
-   spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.3 stream_taxi_json.py
-   ```
+  ```bash
+  bash ~/streamify/scripts/vm_setup.sh && \
+  exec newgrp docker
+  ```
+
+- Set the evironment variables -
+
+  - External IP of the Kafka VM
+  - GCP Project ID
+  - Cloud Storage Bucket
+    ```bash
+    export KAFKA_ADDRESS=IP.ADD.RE.SS
+    export GCP_PROJECT_ID=project-id
+    export GCP_GCS_BUCKET=bucket-name
+    ```
+
+- Start Kafka
+
+  ```bash
+  cd ~/streamify/kafka && \
+  docker-compose up
+  ```
+
+  **Note**: Sometimes the `broker` & `schema-registry` containers die during startup. You should just stop all the containers and then rerun `docker-compose up`.
+
+- Open another terminal session for the Kafka VM and start sending messages to your Kafka broker with Eventsim
+
+  ```bash
+  bash ~/streamify/scripts/eventsim_startup.sh
+  ```
+
+  This will start events for 1 Million users spread out from the current time to the next 24 hours. Follow the logs to see the progress.
+
+- To follow the logs
+  ```bash
+  docker logs --follow million_events
+  ```
+
+### Setup Airflow VM
+
+- Clone git repo, update and install make
+
+  ```bash
+  sudo apt-get update && \
+  sudo apt-get install make && \
+  git clone https://github.com/ankurchavda/streamify.git && \
+  cd streamify
+  ```
+
+- Move the `google_credentials.json` file to `~/.google/credentials/` in your VM. Else the dags will fail.
+
+- Install anaconda, docker & docker-compose.
+
+  ```bash
+  bash ~/streamify/scripts/vm_setup.sh && \
+  exec newgrp docker
+  ```
+
+- Start Airflow. (This shall take time, have coffee!)
+  ```bash
+  bash ~/streamify/scripts/airflow_startup.sh && cd ~/streamify/airflow
+  ```
 
 ## TODO
 
-1. Make setup easier with `Makefile`. Possibly a one-click setup.
-2. Setup the entire cluster with Terraform - Open network ports, create target tags.
-3. Object-oriented design for spark streaming.
+1. Change lat/lon values to decimal
+2. Make setup easier with `Makefile`. Possibly a one-click setup.
+3. Setup the entire cluster with Terraform - Open network ports, create target tags.
+4. Object-oriented design for spark streaming.

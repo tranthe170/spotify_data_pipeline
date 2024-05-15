@@ -58,6 +58,6 @@ variable "bucket_suffix" {
 
 variable "streamify_git_repo" {
   description = "Clone URL of the git repo"
-  default     = "https://github.com/ankurchavda/streamify.git"
+  default     = "https://github.com/tranthe170/spotify_data_pipeline.git"
   type        = string
 }
