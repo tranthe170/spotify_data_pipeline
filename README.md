@@ -121,28 +121,35 @@ ssh streamify-airflow
 
 ### Setup Airflow VM
 
-- Clone git repo, update and install make
+Clone git repo, update and install make
 
-  ```bash
-  sudo apt-get update && \
-  sudo apt-get install make && \
-  git clone https://github.com/ankurchavda/streamify.git && \
-  cd streamify
-  ```
+    ```bash
+    git clone https://github.com/ankurchavda/streamify.git && \
+    cd streamify
+    ```
+    @@ -150,10 +148,25 @@ ssh streamify-airflow
+    exec newgrp docker
+    ```
 
-- Move the `google_credentials.json` file to `~/.google/credentials/` in your VM. Else the dags will fail.
+- Set the evironment variables -
 
-- Install anaconda, docker & docker-compose.
+  - GCP Project ID
+  - Cloud Storage Bucket
+    ```bash
+    export GCP_PROJECT_ID=project-id
+    export GCP_GCS_BUCKET=bucket-name
+    ```
+    **Note**: You will have setup these env vars every time you create a shell session.
 
-  ```bash
-  bash ~/streamify/scripts/vm_setup.sh && \
-  exec newgrp docker
-  ```
-
-- Start Airflow. (This shall take time, have coffee!)
+- Start Airflow. (This shall take a few good minutes, grab a coffee!)
   ```bash
   bash ~/streamify/scripts/airflow_startup.sh && cd ~/streamify/airflow
   ```
+- Follow the docker-compose logs
+  ```bash
+  docker-compose --follow
+  ```
+- Airflow should be available on port `8080`. Login with default username & password as **airflow**.
 
 ## TODO
 
