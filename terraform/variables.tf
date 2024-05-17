@@ -1,6 +1,7 @@
 variable "project" {
   description = "Your GCP Project ID"
   type        = string
+  default = "spotify-stream-data-pipeline"
 }
 
 variable "storage_class" {
@@ -48,4 +49,11 @@ variable "prod_bq_dataset" {
 variable "bucket" {
   description = "The name of your bucket. This should be unique across GCP"
   type        = string
+  default = "spotify-stream-bucket-17052024"
+}
+
+variable "credentials" {
+  description = "Path to the credentials file"
+  type        = string
+  default     = "./keys/credentials.json"
 }

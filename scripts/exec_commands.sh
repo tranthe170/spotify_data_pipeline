@@ -9,7 +9,7 @@ docker run -itd \
     -c "examples/example-config.json" \
     --start-time "2022-03-20T10:10:00" \
     --end-time "2022-03-20T18:00:00" \
-    --nusers 1500000 \
+    --nusers 150000 \
     --growth-rate 10 \
     --userid 1 \
     --kafkaBrokerList localhost:9092 \
@@ -26,9 +26,9 @@ docker run -itd \
     -c "examples/alt-example-config.json" \
     --start-time "2022-03-20T10:10:00" \
     --end-time "2022-03-20T18:00:00" \
-    --nusers 1500000 \
+    --nusers 150000 \
     --growth-rate 9 \
-    --userid 3000000 \
+    --userid 300000 \
     --kafkaBrokerList localhost:9092 \
     --randomseed 2 \
     --continuous
@@ -43,9 +43,9 @@ docker run -itd \
     -c "examples/alt-example-config.json" \
     --start-time "2022-03-20T08:20:00" \
     --end-time "2022-03-20T18:00:00" \
-    --nusers 900000 \
+    --nusers 90000 \
     --growth-rate 12 \
-    --userid 6000000 \
+    --userid 600000 \
     --kafkaBrokerList localhost:9092 \
     --randomseed 3 \
     --continuous
@@ -57,7 +57,7 @@ docker logs --follow events_alt
 
 
 export KAFKA_ADDRESS=
-export GCS_STORAGE_PATH=gs://streamify
+export GCS_STORAGE_PATH=gs://
 
 #Stream page view events into Spark
 spark-submit \
@@ -81,9 +81,9 @@ docker run -it \
   --network host \
   events:1.0 \
     -c "examples/example-config.json" \
-    --start-time "2022-03-25T17:40:00" \
-    --end-time "2022-03-25T23:00:00" \
-    --nusers 1000000 \
+    --start-time "2024-03-25T17:40:00" \
+    --end-time "2024-03-25T23:00:00" \
+    --nusers 100000 \
     --growth-rate 10 \
     --userid 1 \
     --kafkaBrokerList localhost:9092 \

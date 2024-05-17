@@ -13,13 +13,13 @@ We will setup Kafka and eventsim in two separate docker processes in a dedicated
 - Clone git repo and cd into Kafka folder
 
   ```bash
-  git clone https://github.com/ankurchavda/streamify.git && \
+  git clone https://github.com/tranthe170/spotify_data_pipeline.git && \
   ```
 
 - Install anaconda, docker & docker-compose.
 
   ```bash
-  bash ~/streamify/scripts/vm_setup.sh && \
+  bash ~/spotify_data_pipeline/scripts/vm_setup.sh && \
   exec newgrp docker
   ```
 
@@ -36,7 +36,7 @@ We will setup Kafka and eventsim in two separate docker processes in a dedicated
 - Start Kafka
 
   ```bash
-  cd ~/streamify/kafka && \
+  cd ~/spotify_data_pipeline/kafka && \
   docker-compose build && \
   docker-compose up
   ```
@@ -48,7 +48,7 @@ We will setup Kafka and eventsim in two separate docker processes in a dedicated
 - Open another terminal session for the Kafka VM and start sending messages to your Kafka broker with Eventsim
 
   ```bash
-  bash ~/streamify/scripts/eventsim_startup.sh
+  bash ~/spotify_data_pipeline/scripts/eventsim_startup.sh
   ```
 
   This will start creating events for 1 Million users spread out from the current time to the next 24 hours.

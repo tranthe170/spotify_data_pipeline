@@ -13,14 +13,14 @@ We will setup airflow on docker in a dedicated compute instance. dbt is setup in
 - Clone git repo
 
   ```bash
-  git clone https://github.com/ankurchavda/streamify.git && \
+  git clone https://github.com/tranthe170/spotify_data_pipeline.git && \
   cd streamify
   ```
 
 - Install anaconda, docker & docker-compose.
 
   ```bash
-  bash ~/streamify/scripts/vm_setup.sh && \
+  bash ~/spotify_data_pipeline/scripts/vm_setup.sh && \
   exec newgrp docker
   ```
 
@@ -44,7 +44,7 @@ We will setup airflow on docker in a dedicated compute instance. dbt is setup in
 - Start Airflow. (This shall take a few good minutes, grab a coffee!)
 
   ```bash
-  bash ~/streamify/scripts/airflow_startup.sh && cd ~/streamify/airflow
+  bash ~/spotify_data_pipeline/scripts/airflow_startup.sh && cd ~/spotify_data_pipeline/airflow
   ```
 
 - Airflow should be available on port `8080` a couple of minutes after the above setup is complete. Login with default username & password as **airflow**.
