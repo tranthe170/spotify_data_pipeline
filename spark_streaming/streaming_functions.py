@@ -94,14 +94,6 @@ def process_stream(stream, stream_schema, topic):
               .withColumn("hour", hour(col("ts")))
               .withColumn("day", dayofmonth(col("ts")))
               )
-    
-    # rectify string encoding
-    if topic in ["listen_events", "page_view_events"]:
-        stream = (stream
-                .withColumn("song", string_decode("song"))
-                .withColumn("artist", string_decode("artist")) 
-                )
-
 
     return stream
 
