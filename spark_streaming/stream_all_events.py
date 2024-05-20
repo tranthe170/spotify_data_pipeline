@@ -4,7 +4,6 @@
 # stream_all_events.py
 import os
 
-from schema import schema
 from streaming_functions import *
 from schema import EVENTS_SCHEMA, PROCESSED_SCHEMA
 
