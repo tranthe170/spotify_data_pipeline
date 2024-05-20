@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (col, dayofmonth, from_json, hour, month,
-                                   udf, year)
+                                   udf, year, to_timestamp, round, concat, lit)
 
 
 @udf
@@ -88,12 +88,22 @@ def process_stream(stream, stream_schema, topic):
 
     # Add month, day, hour to split the data into separate directories
     stream = (stream
-              .withColumn("ts", (col("ts")/1000).cast("timestamp"))
+              .withColumn("ts", to_timestamp(col("listen_timestamp")))
               .withColumn("year", year(col("ts")))
               .withColumn("month", month(col("ts")))
               .withColumn("hour", hour(col("ts")))
               .withColumn("day", dayofmonth(col("ts")))
+              .drop("ts")
               )
+    
+    stream = (stream
+              .withColumn("duration_minutes", round(col("duration_ms") / 60000.0, 2))
+              .withColumn("latitude", round(col("latitude"), 3))
+              .withColumn("longitude", round(col("longitude"), 3))
+              .withColumn(
+                "full_name", concat(col("first_name"), lit(" "), col("last_name"))
+        )
+    )
 
     return stream
 
