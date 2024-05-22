@@ -36,13 +36,13 @@ variable "zone" {
 
 variable "stg_bq_dataset" {
   description = "Storage class type for your bucket. Check official docs for more info."
-  default     = "streamify_stg"
+  default     = "spotify_stg"
   type        = string
 }
 
 variable "prod_bq_dataset" {
   description = "Storage class type for your bucket. Check official docs for more info."
-  default     = "streamify_prod"
+  default     = "spotify_prod"
   type        = string
 }
 

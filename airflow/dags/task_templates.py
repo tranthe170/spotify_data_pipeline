@@ -32,7 +32,7 @@ def create_external_table(event,
             },
             'externalDataConfiguration': {
                 'sourceFormat': 'PARQUET',
-                'sourceUris': [f'gs://{gcp_gcs_bucket}/{events_path}/*'],
+                'sourceUris': [f'gs://{gcp_gcs_bucket}/{events_path}/month=*'],
             },
         }
     )
@@ -65,7 +65,7 @@ def create_empty_table(event,
         schema_fields = events_schema,
         time_partitioning = {
             'type': 'HOUR',
-            'field': 'ts'
+            'field': 'listen_timestamp'
             },
         exists_ok = True
     )
