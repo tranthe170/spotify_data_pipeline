@@ -2,8 +2,8 @@ version: 2
 
 sources:
   - name: spotify_staging
-    database: dev_spotify_data 
-    schema: test  
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: stg_dataset  
     tables:
       - name: staging_events
       - name: staging_stream
