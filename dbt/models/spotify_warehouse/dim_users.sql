@@ -1,4 +1,4 @@
-
+{% from 'dbt_utils' import generate_surrogate_key %}
 {{
   config(
     materialized='incremental',
@@ -19,7 +19,7 @@ with unique_users as (
     country,
     latitude,
     longitude
-    FROM  {{ref('cdc_staging')}}
+    FROM  {{source('spotify_staging','spotify')}}
 ),
 final as (
     select users.first_name, users.last_name, users.full_name, users.gender, location.locationKey
@@ -30,6 +30,6 @@ final as (
     AND users.latitude=location.latitude AND users.longitude=location.longitude
 )
 
-SELECT {{ dbt_utils.generate_surrogate_key(['first_name', 'last_name', 'full_name', 'locationKey']) }} as userKey,
+SELECT {{ generate_surrogate_key(['first_name', 'last_name', 'full_name', 'locationKey']) }} as userKey,
 *
 FROM final where exists (select 1 from final)

@@ -1,4 +1,4 @@
-
+{% from 'dbt_utils' import generate_surrogate_key %}
 {{
   config(
     materialized='incremental',
@@ -9,7 +9,7 @@
 }}
 
 with cte as (
-  select to_timestamp(listen_timestamp) as timestamp from {{ref('cdc_staging')}}
+  select to_timestamp(listen_timestamp) as timestamp from {{source('spotify_staging','spotify')}}
 ),
 final as (
 SELECT distinct
@@ -22,5 +22,5 @@ SELECT distinct
     CASE WHEN EXTRACT( DAYOFWEEK FROM timestamp) IN (6,7) THEN True ELSE False END AS weekendFlag
 FROM  cte where exists (select 1 from cte)
 )
-select *, {{ dbt_utils.generate_surrogate_key(['date']) }} AS dateKey from final
+select *, {{ generate_surrogate_key(['date']) }} AS dateKey from final
 

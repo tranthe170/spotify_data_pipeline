@@ -1,4 +1,4 @@
-
+{% from 'dbt_utils' import generate_surrogate_key %}
 {{
   config(
     materialized='incremental',
@@ -15,10 +15,10 @@ with final as (
     country,
     latitude,
     longitude
-    FROM  {{ref('cdc_staging')}}
+    FROM  {{source('spotify_staging','spotify')}}
 )
 
-SELECT {{ dbt_utils.generate_surrogate_key(['latitude', 'longitude', 'city', 'state', 'country']) }} as locationKey,
+SELECT {{ generate_surrogate_key(['latitude', 'longitude', 'city', 'state', 'country']) }} as locationKey,
 *
 FROM final where exists (select 1 from final)
 

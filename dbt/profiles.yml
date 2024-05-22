@@ -1,25 +1,25 @@
 spotify_project:
   outputs:
     dev:
-      dataset: streamify_stg
+      dataset: spotify_stg
       fixed_retries: 1
       keyfile: /.google/credentials/google_credentials.json
       location: us-central1
       method: service-account
       priority: interactive
-      project: "{ { env_var('GCP_PROJECT_ID') } }"
+      project: "spotify-stream-data-pipeline"
       threads: 4
       timeout_seconds: 300
       type: bigquery
 
     prod:
-      dataset: streamify_stg
+      dataset: spotify_prod
       fixed_retries: 1
       keyfile: /.google/credentials/google_credentials.json
       location: us-central1
       method: service-account
       priority: interactive
-      project: "{ { env_var('GCP_PROJECT_ID') } }"
+      project: "spotify-stream-data-pipeline"
       threads: 4
       timeout_seconds: 300
       type: bigquery

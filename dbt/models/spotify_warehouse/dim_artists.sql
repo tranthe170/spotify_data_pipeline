@@ -1,4 +1,4 @@
-
+{% from 'dbt_utils' import generate_surrogate_key %}
 {{
   config(
     materialized='incremental',
@@ -9,5 +9,5 @@
   )
 }}
 SELECT distinct artist_id as artistId, artist_name as artistName,
-        {{ dbt_utils.generate_surrogate_key(['artistId']) }} AS artistKey
-    from {{ref('cdc_staging')}}
+        {{ generate_surrogate_key(['artistId']) }} AS artistKey
+    from {{source('spotify_staging','spotify')}};

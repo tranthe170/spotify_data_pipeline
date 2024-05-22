@@ -1,4 +1,4 @@
-
+{% from 'dbt_utils' import generate_surrogate_key %}
 {{
   config(
     materialized='incremental',
@@ -28,7 +28,7 @@ with unique_songs as (
     liveness,
     valence,
     tempo
-    FROM  {{ref('cdc_staging')}}
+    FROM  {{source('spotify_staging','spotify')}}
 ),
 final as (
     select songs.* exclude (artistName, artistId), artists.artistKey,
@@ -38,5 +38,5 @@ final as (
     {{ref('dim_artists')}} AS artists
     ON songs.artistId=artists.artistId 
 )
-SELECT {{ dbt_utils.generate_surrogate_key(['song_id', 'song_title', 'album_name']) }} as songKey,
+SELECT {{ generate_surrogate_key(['song_id', 'song_title', 'album_name']) }} as songKey,
 final.* exclude(rnk) from final WHERE rnk=1
