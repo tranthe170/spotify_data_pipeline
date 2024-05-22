@@ -141,8 +141,8 @@ resource "google_bigquery_dataset" "stg_dataset" {
   delete_contents_on_destroy = true
 }
 
-resource "google_bigquery_dataset" "prod_dataset" {
-  dataset_id                 = var.prod_bq_dataset
+resource "google_bigquery_dataset" "prd_dataset" {
+  dataset_id                 = var.prd_bq_dataset
   project                    = var.project
   location                   = var.region
   delete_contents_on_destroy = true
