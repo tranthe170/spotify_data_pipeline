@@ -63,17 +63,11 @@ We will setup airflow on docker in a dedicated compute instance. dbt is setup in
 
 ### DAGs
 
-The setup has two dags
-
-- `load_songs_dag`
-
-  - Trigger first and only once to load a onetime song file into BigQuery
-    ![songs_dag](../images/songs_dag.png)
+The setup has one dags
 
 - `streamify_dag`
   - Trigger after `load_songs_dag` to make sure the songs table table is available for the transformations
   - This dag will run hourly at the 5th minute and perform transformations to create the dimensions and fact.
-    ![streamify_dag](../images/streamify_dag.png)
 
 - DAG Flow -
     - We first create an external table for the data that was received in the past hour.
@@ -84,9 +78,7 @@ The setup has two dags
 
 ### dbt
 
-The transformations happen using dbt which is triggered by Airflow. The dbt lineage should look something like this -
-
-![img](../images/dbt.png)
+The transformations happen using dbt which is triggered by Airflow.
 
 Dimensions:
 - `dim_artists`
