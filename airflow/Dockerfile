@@ -1,29 +1,26 @@
-# First-time build can take upto 10 mins.
-
+# First-time build can take up to 10 mins.
 FROM apache/airflow:2.7.3
 
 ENV AIRFLOW_HOME=/opt/airflow
 
+# Install necessary system packages
 USER root
 RUN apt-get update && \
-    apt-get upgrade -y && \
+    ACCEPT_EULA=Y apt-get upgrade -y && \
     apt-get install -y git
 
 
-USER ${AIRFLOW_UID}
+# Switch back to airflow user to install Python packages
+USER ${AIRFLOW_UID:-50000}
 RUN pip install --upgrade pip
-# git gcc g++ -qqq
-
+# Install Python packages from requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Ref: https://airflow.apache.org/docs/docker-stack/recipes.html
-
-SHELL ["/bin/bash", "-o", "pipefail", "-e", "-u", "-x", "-c"]
-
+# Install Google Cloud SDK
+USER root
 ARG CLOUD_SDK_VERSION=322.0.0
 ENV GCLOUD_HOME=/home/google-cloud-sdk
-
 ENV PATH="${GCLOUD_HOME}/bin/:${PATH}"
 
 RUN DOWNLOAD_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz" \
@@ -39,6 +36,8 @@ RUN DOWNLOAD_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/goo
     && rm -rf "${TMP_DIR}" \
     && gcloud --version
 
+# Set the working directory
 WORKDIR $AIRFLOW_HOME
 
-USER ${AIRFLOW_UID}
+# Switch back to airflow user
+USER ${AIRFLOW_UID:-50000}
