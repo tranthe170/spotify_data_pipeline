@@ -1,13 +1,16 @@
 # First-time build can take upto 10 mins.
 
-FROM apache/airflow:2.2.3
+FROM apache/airflow:2.7.3
 
 ENV AIRFLOW_HOME=/opt/airflow
 
 USER root
 RUN apt-get update && \
-    ACCEPT_EULA=Y apt-get upgrade -y && \
+    apt-get upgrade -y && \
     apt-get install -y git
+
+
+USER ${AIRFLOW_UID}
 RUN pip install --upgrade pip
 # git gcc g++ -qqq
 
@@ -38,4 +41,4 @@ RUN DOWNLOAD_URL="https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/goo
 
 WORKDIR $AIRFLOW_HOME
 
-USER $AIRFLOW_UID
+USER ${AIRFLOW_UID}

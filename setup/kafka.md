@@ -13,7 +13,7 @@ We will setup Kafka and eventsim in two separate docker processes in a dedicated
 - Clone git repo and cd into Kafka folder
 
   ```bash
-  git clone https://github.com/tranthe170/spotify_data_pipeline.git && \
+  git clone https://github.com/tranthe170/spotify_data_pipeline.git
   ```
 
 - Install anaconda, docker & docker-compose.

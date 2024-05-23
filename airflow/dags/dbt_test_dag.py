@@ -15,12 +15,12 @@ with DAG(
     schedule_interval="@once", #At the 5th minute of every hour
     start_date=datetime(2022,3,20),
     catchup=True,
-    tags=['streamify', 'dbt']
+    tags=['spotify', 'dbt']
 ) as dag:
 
     dbt_test_task = BashOperator(
         task_id = "dbt_test",
-        bash_command = "cd /dbt && dbt deps && dbt compile --profiles-dir ."
+        bash_command = "cd /dbt && dbt deps --profiles-dir . --target prod"
     )
 
     dbt_test_task

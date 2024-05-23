@@ -55,10 +55,6 @@ If you already have a Google Cloud account and a working terraform setup, you ca
 - Setup Spark Cluster for stream processing - [Setup](setup/spark.md)
 - Setup Airflow on Compute Instance to trigger the hourly data pipeline - [Setup](setup/airflow.md)
 
-### Debug
-
-If you run into issues, see if you find something in this debug [guide](setup/debug.md).
-
 ### How can I make this better?!
 
 A lot can still be done :).

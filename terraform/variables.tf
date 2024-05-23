@@ -55,5 +55,5 @@ variable "bucket" {
 variable "credentials" {
   description = "Path to the credentials file"
   type        = string
-  default     = "./keys/credentials.json"
+  default     = "./keys/google_credentials.json"
 }

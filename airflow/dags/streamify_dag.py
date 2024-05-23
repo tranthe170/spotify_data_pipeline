@@ -18,7 +18,7 @@ EXECUTION_MONTH = '{{ logical_date.strftime("%-m") }}'
 EXECUTION_DAY = '{{ logical_date.strftime("%-d") }}'
 EXECUTION_HOUR = '{{ logical_date.strftime("%-H") }}'
 EXECUTION_DATETIME_STR = '{{ logical_date.strftime("%m%d%H") }}'
-TABLE_MAP = 'SPOTIFY_TABLE'
+TABLE_MAP = {'SPOTIFY_TABLE': 'spotify'}
 MACRO_VARS = {"GCP_PROJECT_ID":GCP_PROJECT_ID, 
               "BIGQUERY_DATASET": BIGQUERY_DATASET, 
               "EXECUTION_DATETIME_STR": EXECUTION_DATETIME_STR
