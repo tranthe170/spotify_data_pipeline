@@ -53,7 +53,7 @@ resource "google_compute_instance" "kafka_vm_instance" {
 
 resource "google_compute_instance" "airflow_vm_instance" {
   name                      = "streamify-airflow-instance"
-  machine_type              = "e2-small"
+  machine_type              = "e2-medium"
   allow_stopping_for_update = true
 
   boot_disk {
