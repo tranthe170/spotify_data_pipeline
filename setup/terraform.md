@@ -25,11 +25,10 @@ Spin up the Infra -
 
 - Terraform plan should show the creation of following services -
 
-  - `e2-standard-4` Compute Instance for Kafka
-  - `e2-standard-4` Compute Instance for Airflow
+  - `e2-small` Compute Instance for Kafka
+  - `e2-medium` Compute Instance for Airflow
   - Dataproc Spark Cluster
-    - One `e2-standard-2` Master node
-    - Two `e2-medium` Worker nodes
+    - One `n2-standard-2` Master node
   - A Google Cloud Storage bucket
   - Two Bigquery Datasets
     - streamify_stg

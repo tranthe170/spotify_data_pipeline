@@ -43,6 +43,4 @@ We will start the Spark Streaming process in the DataProc cluster we created to 
 
 - Topics we are reading from
 
-  - listen_events
-  - page_view_events
-  - auth_events
+  - spotify

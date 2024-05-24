@@ -87,8 +87,8 @@ resource "google_storage_bucket" "bucket" {
   }
 }
 
-resource "google_dataproc_cluster" "mulitnode_spark_cluster" {
-  name   = "streamify-multinode-spark-cluster"
+resource "google_dataproc_cluster" "spark_cluster" {
+  name   = "spark-cluster"
   region = var.region
 
   cluster_config {

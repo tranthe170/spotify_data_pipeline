@@ -14,7 +14,7 @@ We will setup airflow on docker in a dedicated compute instance. dbt is setup in
 
   ```bash
   git clone https://github.com/tranthe170/spotify_data_pipeline.git && \
-  cd streamify
+  cd spotify_data_pipeline
   ```
 
 - Install anaconda, docker & docker-compose.
@@ -66,7 +66,6 @@ We will setup airflow on docker in a dedicated compute instance. dbt is setup in
 The setup has one dags
 
 - `streamify_dag`
-  - Trigger after `load_songs_dag` to make sure the songs table table is available for the transformations
   - This dag will run hourly at the 5th minute and perform transformations to create the dimensions and fact.
 
 - DAG Flow -
